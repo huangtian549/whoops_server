@@ -55,7 +55,7 @@ public class CommentServiceImpl implements ICommentService {
 		if(content != null && content.length() > 20){
 			content = content.substring(0, 20);
 		}
-		record.setMsg("@@someone_reply@@ " + "\"" + post.getContent() + "\"");
+		record.setMsg("someone replied your post " + "\"" + post.getContent() + "\"");
 		record.setUid(comment.getUid());
 		record.setPostId(comment.getPostId());
 		record.setStatus(0);
@@ -91,14 +91,14 @@ public class CommentServiceImpl implements ICommentService {
 				record.setType(1);
 				likeCommentDao.insertSelective(record );
 				likeCommentDao.deleteByPrimaryKey(likePostId);
-				addMsg(comment2.getUid(), comment2.getContent(), "@@someone_cancel_unlike_and_like_comment@@ ", comment2.getPostId());
+				addMsg(comment2.getUid(), comment2.getContent(), "someone cancelled to unlike and like your comment ", comment2.getPostId());
 				return likeNum - comment2.getDislikeNum() + 1;
 			} else {
 				int likeNum = comment2.getLikeNum() - 1;
 				comment.setLikeNum(likeNum); //如果已经喜欢过了，再点击，则是取消喜欢
 				commentDao.updateByPrimaryKeySelective(comment);
 				likeCommentDao.deleteByPrimaryKey(list.get(0).getId());
-				addMsg(comment2.getUid(), comment2.getContent(), "@@someone_cancel_like_comment@@ ", comment2.getPostId());
+				addMsg(comment2.getUid(), comment2.getContent(), "someone cancelled to like your comment ", comment2.getPostId());
 				return likeNum - comment2.getDislikeNum();
 
 			}
@@ -111,7 +111,7 @@ public class CommentServiceImpl implements ICommentService {
 			record.setUid(comment.getUid());
 			record.setType(1);
 			likeCommentDao.insertSelective(record );
-			addMsg(comment2.getUid(), comment2.getContent(), "@@someone_like_comment@@ ", comment2.getPostId());
+			addMsg(comment2.getUid(), comment2.getContent(), "someone liked your comment ", comment2.getPostId());
 			return likeNum - comment2.getDislikeNum();
 		}
 
@@ -144,7 +144,7 @@ public class CommentServiceImpl implements ICommentService {
 				record.setType(-1);
 				likeCommentDao.insertSelective(record );
 				likeCommentDao.deleteByPrimaryKey(likeCommentId);
-				addMsg(comment2.getUid(), comment2.getContent(), "@@someone_cancel_unlike_and_like_comment@@ ", comment2.getPostId());
+				addMsg(comment2.getUid(), comment2.getContent(), "someone cancelle to unlike and like your comment ", comment2.getPostId());
 				return comment2.getLikeNum() -1 - dislikeNum;
 				
 			} else {
@@ -152,7 +152,7 @@ public class CommentServiceImpl implements ICommentService {
 				comment.setDislikeNum(dislikeNum); //如果已经dislike过了，再点击，则是取消喜欢
 				commentDao.updateByPrimaryKeySelective(comment);
 				likeCommentDao.deleteByPrimaryKey(list.get(0).getId());
-				addMsg(comment2.getUid(), comment2.getContent(), "@@someone_cancel_unlike_comment@@ ", comment2.getPostId());
+				addMsg(comment2.getUid(), comment2.getContent(), "someone cancelled to unlike your comment ", comment2.getPostId());
 				return comment2.getLikeNum() - dislikeNum;
 				
 			}
@@ -165,7 +165,7 @@ public class CommentServiceImpl implements ICommentService {
 			record.setUid(comment.getUid());
 			record.setType(-1);
 			likeCommentDao.insertSelective(record );
-			addMsg(comment2.getUid(), comment2.getContent(), "@@someone_unlike_comment@@ ", comment2.getPostId());
+			addMsg(comment2.getUid(), comment2.getContent(), "someone unliked your comment ", comment2.getPostId());
 			return comment2.getLikeNum() - dislikeNum;
 		}
 

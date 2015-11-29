@@ -174,17 +174,15 @@ public class PostServiceImpl implements IPostService {
 				record.setType(1);
 				likePostDao.insertSelective(record );
 				likePostDao.deleteByPrimaryKey(likePostId);
-				addMsg(post2.getUid(), post2.getContent(), "@@someone_cancel_like_and_unlike@@ ", post2.getId(),4);
+				addMsg(post2.getUid(), post2.getContent(), "someone cancelled to like and unlike your post ", post2.getId(),4);
 				return new int[] { likeNum - post2.getDislikeNum() + 1, 1};
 			} else {
 				int likeNum = post2.getLikeNum() - 1;
 				post.setLikeNum(likeNum); //如果已经喜欢过了，再点击，则是取消喜欢
 				logger.info("like_num record:postId:" + post.getId() + ":old likeNum:"+ post2.getLikeNum() + " new likeNum:" + post.getLikeNum() + " dislikeNum:" + post.getDislikeNum());
 				postDao.updateByPrimaryKeySelective(post);
-				String[] a = {};
-				System.out.println(a[1]);
 				likePostDao.deleteByPrimaryKey(list.get(0).getId());
-				addMsg(post2.getUid(), post2.getContent(), "@@someone_cancel_like@@ ",post2.getId(),3);
+				addMsg(post2.getUid(), post2.getContent(), "someone cancelled to like your post ",post2.getId(),3);
 				return new int[] { likeNum - post2.getDislikeNum(), 0};
 
 			}
@@ -198,7 +196,7 @@ public class PostServiceImpl implements IPostService {
 			record.setUid(post.getUid());
 			record.setType(1);
 			likePostDao.insertSelective(record );
-			addMsg(post2.getUid(), post2.getContent(), "@@someone_like@@ ",post2.getId(),2);
+			addMsg(post2.getUid(), post2.getContent(), "someone like your post ",post2.getId(),2);
 			return new int[] { likeNum - post2.getDislikeNum(), 1};
 		}
 		
@@ -235,7 +233,7 @@ public class PostServiceImpl implements IPostService {
 				record.setType(-1);
 				likePostDao.insertSelective(record );
 				likePostDao.deleteByPrimaryKey(likePostId);
-				addMsg(post2.getUid(), post2.getContent(), "@@someone_cancel_unlike_and_like@@ ",post2.getId(), 2);
+				addMsg(post2.getUid(), post2.getContent(), "someone cancelled to unlike and like your post ",post2.getId(), 2);
 				return new int[] { post2.getLikeNum() -1 - dislikeNum, -1};
 				
 			} else {
@@ -245,7 +243,7 @@ public class PostServiceImpl implements IPostService {
 				logger.info("like_num record:postId:" + post.getId() + ":old likeNum:"+ post2.getLikeNum() + " new likeNum:" + post.getLikeNum() + " dislikeNum:" + post.getDislikeNum());
 				postDao.updateByPrimaryKeySelective(post);
 				likePostDao.deleteByPrimaryKey(list.get(0).getId());
-				addMsg(post2.getUid(), post2.getContent(), "@@someone_cancel_unlike@@ ",post2.getId(),5);
+				addMsg(post2.getUid(), post2.getContent(), "someone cancelled to unlike your post ",post2.getId(),5);
 				return new int[] { post2.getLikeNum() - dislikeNum, 0};
 				
 			}
@@ -259,7 +257,7 @@ public class PostServiceImpl implements IPostService {
 			record.setUid(post.getUid());
 			record.setType(-1);
 			likePostDao.insertSelective(record );
-			addMsg(post2.getUid(), post2.getContent(), "@@someone_unlike@@ ",post2.getId(),4);
+			addMsg(post2.getUid(), post2.getContent(), "someone unlike your post ",post2.getId(),4);
 			return new int[] { post2.getLikeNum() - dislikeNum, -1};
 		}
 
