@@ -17,6 +17,8 @@
     <result column="school_id" property="schoolId" jdbcType="INTEGER" />
     <result column="nick_name" property="nickName" jdbcType="VARCHAR" />
     <result column="comment_count" property="commentCount" jdbcType="INTEGER" />
+    <result column="activity_id" property="activityId" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="INTEGER" />
     <result column="uid" property="uid" jdbcType="INTEGER" />
     <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
   </resultMap>
@@ -156,12 +158,12 @@
     insert into post (id, content, like_num, 
       dislike_num, image, longitude, 
       latitude, school_id, nick_name, 
-      comment_count, uid, create_date
+      comment_count,activity_id, uid, create_date
       )
     values (#{id,jdbcType=INTEGER}, #{content,jdbcType=VARCHAR}, #{likeNum,jdbcType=INTEGER}, 
       #{dislikeNum,jdbcType=INTEGER}, #{image,jdbcType=VARCHAR}, #{longitude,jdbcType=REAL}, 
       #{latitude,jdbcType=REAL}, #{schoolId,jdbcType=INTEGER}, #{nickName,jdbcType=VARCHAR}, 
-      #{commentCount,jdbcType=INTEGER}, #{uid,jdbcType=INTEGER}, now()
+      #{commentCount,jdbcType=INTEGER}, #{activityId,jdbcType=INTEGER}, #{uid,jdbcType=INTEGER}, now()
       )
   </insert>
   <insert id="insertSelective" parameterType="com.whoops.po.Post" >
@@ -202,6 +204,9 @@
       <if test="commentCount != null" >
         comment_count,
       </if>
+      <if test="activityId != null" >
+        activity_id,
+      </if>
       <if test="uid != null" >
         uid,
       </if>
@@ -239,6 +244,9 @@
       </if>
       <if test="commentCount != null" >
         #{commentCount,jdbcType=INTEGER},
+      </if>
+      <if test="activityId != null" >
+        #{activityId,jdbcType=INTEGER},
       </if>
       <if test="uid != null" >
         #{uid,jdbcType=INTEGER},
@@ -399,35 +407,41 @@
   
    <select id="listNewByLocation" resultMap="BaseResultMap" parameterType="com.whoops.po.Post" >
     select post.*, ACOS(SIN((#{latitude} * 3.1415) / 180 ) *SIN((latitude * 3.1415) / 180 ) +COS((#{latitude} * 3.1415) / 180 ) * COS((latitude * 3.1415) / 180 ) *COS(( #{longitude} * 3.1415) / 180 - (longitude * 3.1415) / 180 ) ) * 3959 as distance 
-    from post where  latitude &gt; #{latitude}-1 and  latitude &lt; #{latitude} +1 and longitude &gt; #{longitude} -1 and  longitude &lt;  #{longitude} +1 having distance &lt;  50  and dislike_num &lt; 5 order by create_date desc limit #{startPage},#{endPage}
+    from post where  latitude &gt; #{latitude}-1 and  latitude &lt; #{latitude} +1 and longitude &gt; #{longitude} -1 and  longitude &lt;  #{longitude} +1 having distance &lt;  50  and dislike_num &lt; 5 and status =0 and activity_id = 0 order by create_date desc limit #{startPage},#{endPage}
    </select>
    
    <select id="listHotByLocation" resultMap="BaseResultMap" parameterType="com.whoops.po.Post" >
     select post.*, ACOS(SIN((#{latitude} * 3.1415) / 180 ) *SIN((latitude * 3.1415) / 180 ) +COS((#{latitude} * 3.1415) / 180 ) * COS((latitude * 3.1415) / 180 ) *COS(( #{longitude} * 3.1415) / 180 - (longitude * 3.1415) / 180 ) ) * 3959 as distance 
-    from post where  latitude &gt; #{latitude}-1 and  latitude &lt; #{latitude} +1 and longitude &gt; #{longitude} -1 and  longitude &lt;  #{longitude} +1 having distance &lt;  50  and dislike_num &lt; 5 order by like_num desc limit #{startPage},#{endPage}
+    from post where  latitude &gt; #{latitude}-1 and  latitude &lt; #{latitude} +1 and longitude &gt; #{longitude} -1 and  longitude &lt;  #{longitude} +1 having distance &lt;  50  and dislike_num &lt; 5 and status =0 and activity_id = 0 order by like_num desc limit #{startPage},#{endPage}
    </select>
    
    <select id="listNewBySchool" resultMap="BaseResultMap" parameterType="com.whoops.po.Post" >
-    select * FROM post p WHERE p.school_id = #{schoolId}  and dislike_num &lt; 5 order by create_date desc limit #{startPage},#{endPage}
+    select * FROM post p WHERE p.school_id = #{schoolId}  and dislike_num &lt; 5 and status =0 and activity_id = 0 order by create_date desc limit #{startPage},#{endPage}
    </select>
    
    <select id="listHotBySchool" resultMap="BaseResultMap" parameterType="com.whoops.po.Post" >
-    select * FROM post p WHERE p.school_id = #{schoolId} and dislike_num &lt; 5 order by like_num desc limit #{startPage},#{endPage}
+    select * FROM post p WHERE p.school_id = #{schoolId} and dislike_num &lt; 5 and status =0 and activity_id = 0 order by like_num desc limit #{startPage},#{endPage}
    </select>
    
     <select id="listHotAll" resultMap="BaseResultMap" parameterType="com.whoops.po.Post" >
-    select * FROM post p WHERE dislike_num &lt; 5 order by like_num desc limit #{startPage},#{endPage}
+    select * FROM post p WHERE dislike_num &lt; 5 and status =0 and activity_id = 0 order by like_num desc limit #{startPage},#{endPage}
    </select>
    
    <select id="listByUid" resultMap="BaseResultMap" parameterType="com.whoops.po.Post" >
-    select * FROM post p WHERE p.uid = #{uid}  order by create_date desc limit #{startPage},#{endPage}
+    select * FROM post p WHERE p.uid = #{uid} and status =0 order by create_date desc limit #{startPage},#{endPage}
    </select>
    
+   <select id="listByActivity" resultMap="BaseResultMap" parameterType="com.whoops.po.Post" >
+    select * FROM post p WHERE p.activity_id = #{activityId} and status =0 order by create_date desc limit #{startPage},#{endPage}
+   </select>
+   
+   
+   
    <select id="listFavorPostByUid" resultMap="BaseResultMap" parameterType="com.whoops.po.FavorPost" >
-    select p.* FROM post p,favor_post f WHERE p.id = f.post_id and f.uid = #{uid}  order by f.create_date desc limit #{startPage},#{endPage}
+    select p.* FROM post p,favor_post f WHERE p.id = f.post_id and f.uid = #{uid} and p.status =0 order by f.create_date desc limit #{startPage},#{endPage}
    </select>
    <select id="listByCommentAndUid" resultMap="BaseResultMap" parameterType="com.whoops.po.Post" >
     select p.* FROM post p, comment c WHERE c.post_id = p.id
-    and c.uid = #{uid} order by c.create_date desc limit #{startPage},#{endPage}
+    and c.uid = #{uid} and p.status =0 order by c.create_date desc limit #{startPage},#{endPage}
    </select>
 </mapper>

@@ -342,5 +342,10 @@ public class PostServiceImpl implements IPostService {
 			}
 		}
 	}
+
+	@Override
+	public List<Post> listByActivity(Post post) {
+		return postDao.listByActivity(post);
+	}
 	
 }

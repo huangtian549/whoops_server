@@ -105,6 +105,10 @@ public class Post extends BasePo {
     private Date createDate;
 
 	private String createDateLabel;
+	
+	private Integer activityId;
+	
+	private Integer status;
 
     public String getCreateDateLabel() {
 		return createDateLabel;
@@ -416,6 +420,22 @@ public class Post extends BasePo {
 
 	public void setIsLike(String isLike) {
 		this.isLike = isLike;
+	}
+
+	public Integer getActivityId() {
+		return activityId;
+	}
+
+	public void setActivityId(Integer activityId) {
+		this.activityId = activityId;
+	}
+
+	public Integer getStatus() {
+		return status;
+	}
+
+	public void setStatus(Integer status) {
+		this.status = status;
 	}
     
     
