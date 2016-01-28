@@ -13,6 +13,7 @@
       
     <!-- 启动扫描所有的controller -->  
     <context:component-scan base-package="com.whoops"/>  
+    <import resource="classpath:springmvc-velocity.xml"/>
       
     <!--  主要作用于@Controller，激活该模式  
           
@@ -35,12 +36,26 @@
     <mvc:interceptors>  
         <bean class="com.whoops.web.interceptor.MyInterceptor"></bean>  
     </mvc:interceptors>  
+    
+    <mvc:interceptors>  
+        <mvc:interceptor>  
+            <!-- 需拦截的地址 -->  
+                        <!-- 一级目录 
+            <mvc:mapping path="/*.do" />  
+            <mvc:mapping path="/*.ajax" />  
+            <mvc:mapping path="/*.htm" />  
+  			-->  
+                        <!-- 二级目录 -->  
+            <mvc:mapping path="/home/*" />    
+            <bean class="com.whoops.web.interceptor.SecurityInterceptor" />  
+        </mvc:interceptor>  
+    </mvc:interceptors>  
      
     <!-- 配置js，css等静态文件直接映射到对应的文件夹，不被DispatcherServlet处理   
     mapping  WebRoot里面的静态文件位置目录  
     location  访问地址   
     -->  
-    <mvc:resources location="/resources/**" mapping="/WEB-INF/resources/"/>  
+    <mvc:resources location="/WEB-INF/classes/velocity/resources/" mapping="/resources/**"/>    
   
     <!--  
        配置/WEB-INF/views/目录里面的jsp文件不被DispatcherServlet处理，可以直接通过浏览器访问。  
@@ -54,9 +69,9 @@
             <value>20048576</value>
         </property>
     </bean>
-    <!-- jsp页面解析器，当Controller返回XXX字符串时，先通过拦截器，然后该类就会在/WEB-INF/views/目录下，查找XXX.jsp文件-->  
+    <!-- jsp页面解析器，当Controller返回XXX字符串时，先通过拦截器，然后该类就会在/WEB-INF/views/目录下，查找XXX.jsp文件 
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">  
         <property name="prefix" value="/WEB-INF/views/"></property>  
         <property name="suffix" value=".jsp"></property>  
-    </bean>  
+    </bean -->  
 </beans>  

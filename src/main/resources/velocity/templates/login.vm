@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+
+    <title>H+ 后台主题UI框架 - 登录</title>
+    
+		<link href="#springUrl('/resources/css/bootstrap.min.css?v=3.4.0')" rel="stylesheet" type="text/css" />
+		<link href="#springUrl('/resources/css/font-awesome.min.css?v=4.3.0')" rel="stylesheet" type="text/css" />
+		<link href="#springUrl('/resources/css/animate.min.css')" rel="stylesheet" type="text/css" />
+		<link href="#springUrl('/resources/css/style.min.css?v=3.2.0')" rel="stylesheet" type="text/css" />
+    <script>if(window.top !== window.self){ window.top.location = window.location;}</script>
+
+</head>
+
+<body class="gray-bg">
+
+    <div class="middle-box text-center loginscreen  animated fadeInDown">
+        <div>
+            <div>
+
+                <img alt="image" class="img-circle" src="#springUrl('/resources/img/logoA-3.png')">
+
+            </div>
+            <h3>欢迎使用 Unipub 后台管理系统</h3>
+			#if($msg)
+				<div class="alert alert-danger">
+                      用户名或者密码错误 
+                </div>
+			#end
+            <form class="m-t" role="form" action="loginSubmit" method="post">
+                <div class="form-group">
+                    <input type="text" name="username" class="form-control" placeholder="用户名" required="required" value="">
+                </div>
+                <div class="form-group">
+                    <input type="password" name="password" class="form-control" placeholder="密码" required="required">
+                </div>
+                <button type="submit" class="btn btn-primary block full-width m-b">登 录</button>
+
+                <p class="text-muted text-center">
+                </p>
+
+            </form>
+        </div>
+    </div>
+
+    <!-- 全局js -->
+    <script src="#springUrl('/resources/js/jquery-2.1.1.min.js')"></script>
+    <script src="#springUrl('/resources/js/bootstrap.min.js?v=3.4.0')"></script>
+
+    
+
+</body>
+
+</html>

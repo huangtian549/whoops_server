@@ -35,4 +35,6 @@ public interface IPostService {
 	List<Post> listFavorPostByUid(FavorPost favorPost);
 	
 	void reportPost(AuditPost auditPost);
+	
+	List<Post> listByActivity(Post post);
 }

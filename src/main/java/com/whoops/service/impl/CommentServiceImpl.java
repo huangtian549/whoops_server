@@ -55,9 +55,9 @@ public class CommentServiceImpl implements ICommentService {
 		if(content != null && content.length() > 20){
 			content = content.substring(0, 20);
 		}
-		record.setMsg("someone replied your post " + "\"" + post.getContent() + "\"");
-		record.setUid(comment.getUid());
-		record.setPostId(comment.getPostId());
+		record.setMsg("Someone replied your post " + "\"" + post.getContent() + "\"");
+		record.setUid(post.getUid());
+		record.setPostId(post.getId());
 		record.setStatus(0);
 		record.setType(1);
 		msgDao.insert(record );

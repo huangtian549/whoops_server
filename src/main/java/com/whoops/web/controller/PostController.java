@@ -37,7 +37,7 @@ public class PostController extends BaseController {
 	@ResponseBody
 	@RequestMapping("/post/add")
 	public ResultObject add(Post po, @RequestParam("file")MultipartFile[] file, HttpServletRequest request) throws Exception {
-		String separator = File.separator;
+		String separator = "/";
 		String path = "/home/data";
 //		String path = "/Users/liunaikun/Pictures";
 
@@ -77,6 +77,47 @@ public class PostController extends BaseController {
 		postService.addPost(po);
 
 		return resultObject;
+	}
+	
+	@RequestMapping("/post/addForWeb")
+	public String addForWeb(Post po, @RequestParam("file")MultipartFile[] file, HttpServletRequest request) throws Exception {
+		String separator = "/";
+		String path = "/home/data";
+//		String path = "/Users/liunaikun/Pictures";
+
+
+		Date date = new Date();
+		String dateString = CalendarUtil.getDateString(date, CalendarUtil.SHORT_DATE_FORMAT_NO_DASH);
+		path = path + separator + dateString;
+		File filePath = new File(path);
+		// 判断文件夹是否存在,如果不存在则创建文件夹
+		if (!filePath.exists()) {
+			filePath.mkdir();
+		}
+		
+		if(file != null && file.length > 0){
+			StringBuilder sb =  new StringBuilder();
+			for (int i = 0; i < file.length; i++) {
+				String uuid = UUID.randomUUID().toString();
+				String fileName = uuid + ".jpg";
+				FileUtils.copyInputStreamToFile(file[i].getInputStream(), new File(path, fileName));
+				String imagePath = path + "/" + fileName;
+				imagePath = imagePath.substring(5);
+				sb.append(imagePath).append(",");
+			}
+			po.setImage(sb.substring(0, sb.length() -1));
+		}
+		
+		if(po.getSchoolId() != null){
+			Float[] location = getLocationBySchollId(po.getSchoolId());
+			if(location != null){
+				po.setLatitude(location[0]);
+				po.setLongitude(location[1]);
+			}
+		}
+
+		postService.addPost(po);
+		return "index";
 	}
 
 
@@ -184,6 +225,20 @@ public class PostController extends BaseController {
 		post.setStartPage(page[0]);
 		post.setEndPage(page[1]);
 		List<Post> list = postService.listHotBySchool(post);
+		processPostList(list);
+		resultObject.addMsg("success");
+		resultObject.setData(list);
+		return resultObject;
+	}
+	
+	@ResponseBody
+	@RequestMapping("/post/listByActivity")
+	public ResultObject listByActivity(Post post, Integer pageNum) {
+		ResultObject resultObject = new ResultObject(1);
+		int[] page = this.page(pageNum);
+		post.setStartPage(page[0]);
+		post.setEndPage(page[1]);
+		List<Post> list = postService.listByActivity(post);
 		processPostList(list);
 		resultObject.addMsg("success");
 		resultObject.setData(list);

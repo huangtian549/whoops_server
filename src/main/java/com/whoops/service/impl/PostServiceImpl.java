@@ -101,6 +101,7 @@ public class PostServiceImpl implements IPostService {
 	public List<Post> listByUid(Post post) {
 		List<Post> list = postDao.listByUid(post);
 		addLikeAndUnlikePostFlag(list, post.getUid());
+		addFavorPostFlag(list, post.getUid());
 		return list;
 	}
 
@@ -161,42 +162,54 @@ public class PostServiceImpl implements IPostService {
 			}
 			//如果现在post的状态是某个用户先dislike，又点击like,则like+1,dislike-1, 删除dislike记录，添加一条like记录
 			if (isDisliked) {
-				int likeNum = post2.getLikeNum() + 1;
-				post.setLikeNum(likeNum); //如果没有喜欢过，则加1
-				post.setDislikeNum(post2.getDislikeNum() - 1);
-				
-				logger.info("like_num record:postId:" + post.getId() + ":old likeNum:"+ post2.getLikeNum() + " new likeNum:" + post.getLikeNum() + " dislikeNum:" + post.getDislikeNum());
-				
-				postDao.updateByPrimaryKeySelective(post);
 				LikePost record = new LikePost();
 				record.setPostId(post.getId());
 				record.setUid(post.getUid());
 				record.setType(1);
 				likePostDao.insertSelective(record );
 				likePostDao.deleteByPrimaryKey(likePostId);
-				addMsg(post2.getUid(), post2.getContent(), "someone cancelled to like and unlike your post ", post2.getId(),4);
-				return new int[] { likeNum - post2.getDislikeNum() + 1, 1};
+				
+				int likeNum = post2.getLikeNum() + 1;
+				int disLikeNum = post2.getDislikeNum();
+				post.setLikeNum(likeNum); //如果没有喜欢过，则加1
+				if (disLikeNum >= 1) {
+					disLikeNum -= 1;
+				}
+				post.setDislikeNum(disLikeNum);
+				
+				logger.info("like_num record:postId:" + post.getId() + ":old likeNum:"+ post2.getLikeNum() + " new likeNum:" + post.getLikeNum() + " dislikeNum:" + post.getDislikeNum());
+				post.setUid(null); //会从接口中传入uid,但是此uid是点击dislike的用户id，不是发帖人的用户id，所以清空
+				postDao.updateByPrimaryKeySelective(post);
+				addMsg(post2.getUid(), post2.getContent(), "Someone liked your post ", post2.getId(),4);
+				return new int[] { likeNum - disLikeNum, 1};
 			} else {
-				int likeNum = post2.getLikeNum() - 1;
+				int likeNum = post2.getLikeNum();
+				if (post2.getLikeNum() >= 1) {
+					likeNum = post2.getLikeNum() - 1;
+					
+				}
 				post.setLikeNum(likeNum); //如果已经喜欢过了，再点击，则是取消喜欢
 				logger.info("like_num record:postId:" + post.getId() + ":old likeNum:"+ post2.getLikeNum() + " new likeNum:" + post.getLikeNum() + " dislikeNum:" + post.getDislikeNum());
+				post.setUid(null); //会从接口中传入uid,但是此uid是点击like的用户id，不是发帖人的用户id，所以清空
 				postDao.updateByPrimaryKeySelective(post);
 				likePostDao.deleteByPrimaryKey(list.get(0).getId());
-				addMsg(post2.getUid(), post2.getContent(), "someone cancelled to like your post ",post2.getId(),3);
+//				addMsg(post2.getUid(), post2.getContent(), "Someone cancelled to like your post ",post2.getId(),3);
 				return new int[] { likeNum - post2.getDislikeNum(), 0};
 
 			}
 		}else{
-			int likeNum = post2.getLikeNum() + 1;
-			post.setLikeNum(likeNum); //如果没有喜欢过，则加1
-			logger.info("like_num record:postId:" + post.getId() + ":old likeNum:"+ post2.getLikeNum() + " new likeNum:" + post.getLikeNum() + " dislikeNum:" + post.getDislikeNum());
-			postDao.updateByPrimaryKeySelective(post);
 			LikePost record = new LikePost();
 			record.setPostId(post.getId());
 			record.setUid(post.getUid());
 			record.setType(1);
 			likePostDao.insertSelective(record );
-			addMsg(post2.getUid(), post2.getContent(), "someone like your post ",post2.getId(),2);
+			
+			post.setUid(null); //会从接口中传入uid,但是此uid是点击like的用户id，不是发帖人的用户id，所以清空
+			int likeNum = post2.getLikeNum() + 1;
+			post.setLikeNum(likeNum); //如果没有喜欢过，则加1
+			logger.info("like_num record:postId:" + post.getId() + ":old likeNum:"+ post2.getLikeNum() + " new likeNum:" + post.getLikeNum() + " dislikeNum:" + post.getDislikeNum());
+			postDao.updateByPrimaryKeySelective(post);
+			addMsg(post2.getUid(), post2.getContent(), "Someone liked your post ",post2.getId(),2);
 			return new int[] { likeNum - post2.getDislikeNum(), 1};
 		}
 		
@@ -221,43 +234,55 @@ public class PostServiceImpl implements IPostService {
 				}
 			}
 			if (isLike) {
-				int dislikeNum = post2.getDislikeNum() + 1;
-				post.setDislikeNum(dislikeNum); //如果没有dislike过，则加1
-				post.setLikeNum(post2.getLikeNum() - 1);
-				
-				logger.info("like_num record:postId:" + post.getId() + ":old likeNum:"+ post2.getLikeNum() + " new likeNum:" + post.getLikeNum() + "old dislikeNum:" + post2.getDislikeNum() + " dislikeNum:" + post.getDislikeNum());
-				postDao.updateByPrimaryKeySelective(post);
 				LikePost record = new LikePost();
 				record.setPostId(post.getId());
 				record.setUid(post.getUid());
 				record.setType(-1);
 				likePostDao.insertSelective(record );
 				likePostDao.deleteByPrimaryKey(likePostId);
-				addMsg(post2.getUid(), post2.getContent(), "someone cancelled to unlike and like your post ",post2.getId(), 2);
-				return new int[] { post2.getLikeNum() -1 - dislikeNum, -1};
+				
+				int dislikeNum = post2.getDislikeNum() + 1;
+				int likeNum = post2.getLikeNum();
+				post.setDislikeNum(dislikeNum); //如果没有dislike过，则加1
+				if (likeNum >= 1) {
+					likeNum = likeNum - 1;
+				}
+				post.setLikeNum(likeNum);
+				
+				logger.info("like_num record:postId:" + post.getId() + ":old likeNum:"+ post2.getLikeNum() + " new likeNum:" + post.getLikeNum() + "old dislikeNum:" + post2.getDislikeNum() + " dislikeNum:" + post.getDislikeNum());
+				post.setUid(null); //会从接口中传入uid,但是此uid是点击dislike的用户id，不是发帖人的用户id，所以清空
+				postDao.updateByPrimaryKeySelective(post);
+				addMsg(post2.getUid(), post2.getContent(), "Someone disliked your post ",post2.getId(), 2);
+				return new int[] { likeNum - dislikeNum, -1};
 				
 			} else {
-				int dislikeNum = post2.getDislikeNum() - 1;
+				int dislikeNum = post2.getDislikeNum();
+				if (post2.getDislikeNum() >= 1) {
+					dislikeNum = post2.getDislikeNum() - 1;
+				}
 				post.setDislikeNum(dislikeNum); //如果已经dislike过了，再点击，则是取消喜欢
 				
 				logger.info("like_num record:postId:" + post.getId() + ":old likeNum:"+ post2.getLikeNum() + " new likeNum:" + post.getLikeNum() + " dislikeNum:" + post.getDislikeNum());
+				post.setUid(null); //会从接口中传入uid,但是此uid是点击dislike的用户id，不是发帖人的用户id，所以清空
 				postDao.updateByPrimaryKeySelective(post);
 				likePostDao.deleteByPrimaryKey(list.get(0).getId());
-				addMsg(post2.getUid(), post2.getContent(), "someone cancelled to unlike your post ",post2.getId(),5);
+//				addMsg(post2.getUid(), post2.getContent(), "Someone cancelled to disliked your post ",post2.getId(),5);
 				return new int[] { post2.getLikeNum() - dislikeNum, 0};
 				
 			}
 		}else{
-			int dislikeNum = post2.getDislikeNum() + 1;
-			post.setDislikeNum(dislikeNum); //如果没有dislike过，则加1
-			postDao.updateByPrimaryKeySelective(post);
-			logger.info("like_num record:postId:" + post.getId() + ":old likeNum:"+ post2.getLikeNum() + " new likeNum:" + post.getLikeNum() + " dislikeNum:" + post.getDislikeNum());
 			LikePost record = new LikePost();
 			record.setPostId(post.getId());
 			record.setUid(post.getUid());
 			record.setType(-1);
 			likePostDao.insertSelective(record );
-			addMsg(post2.getUid(), post2.getContent(), "someone unlike your post ",post2.getId(),4);
+			
+			post.setUid(null); //会从接口中传入uid,但是此uid是点击dislike的用户id，不是发帖人的用户id，所以清空
+			int dislikeNum = post2.getDislikeNum() + 1;
+			post.setDislikeNum(dislikeNum); //如果没有dislike过，则加1
+			postDao.updateByPrimaryKeySelective(post);
+			logger.info("like_num record:postId:" + post.getId() + ":old likeNum:"+ post2.getLikeNum() + " new likeNum:" + post.getLikeNum() + " dislikeNum:" + post.getDislikeNum());
+			addMsg(post2.getUid(), post2.getContent(), "Someone disliked your post ",post2.getId(),4);
 			return new int[] { post2.getLikeNum() - dislikeNum, -1};
 		}
 
@@ -339,6 +364,11 @@ public class PostServiceImpl implements IPostService {
 				}
 			}
 		}
+	}
+
+	@Override
+	public List<Post> listByActivity(Post post) {
+		return postDao.listByActivity(post);
 	}
 	
 }

@@ -112,4 +112,6 @@ public interface PostMapper {
 	List<Post> listFavorPostByUid(FavorPost favorPost);
 
 	List<Post> listNewByLocation(Post post);
+	
+	List<Post> listByActivity(Post post);
 }

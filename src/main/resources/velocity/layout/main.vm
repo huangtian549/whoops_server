@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+	<head>
+		<title>$!page_title</title>
+		<link href="#springUrl('/resources/css/bootstrap.min.css?v=3.4.0')" rel="stylesheet" type="text/css" />
+		<link href="#springUrl('/resources/css/font-awesome.min.css?v=4.3.0')" rel="stylesheet" type="text/css" />
+		<link href="#springUrl('/resources/css/animate.min.css')" rel="stylesheet" type="text/css" />
+		<link href="#springUrl('/resources/css/style.min.css?v=3.2.0')" rel="stylesheet" type="text/css" />
+	</head>
+	<body>
+		<article>
+			<header>#parse('/layout/header.vm')</header>
+			<section>$!content</section>
+			<footer>#parse('/layout/footer.vm')</footer>
+		</article>
+		
+		<!-- 全局js -->
+    <script src="#springUrl('/resources/js/jquery-2.1.1.min.js')"></script>
+    <script src="#springUrl('/resources/js/bootstrap.min.js?v=3.4.0')"></script>
+    <script src="#springUrl('/resources/js/plugins/metisMenu/jquery.metisMenu.js')"></script>
+    <script src="#springUrl('/resources/js/plugins/slimscroll/jquery.slimscroll.min.js')"></script>
+    <script src="#springUrl('/resources/js/plugins/layer/layer.min.js')"></script>
+
+    <!-- 自定义js -->
+    <script src="#springUrl('/resources/js/hplus.min.js?v=3.2.0')"></script>
+    <script type="text/javascript" src="#springUrl('/resources/js/contabs.min.js')"></script>
+
+    <!-- 第三方插件 -->
+    <script src="#springUrl('/resources/js/plugins/pace/pace.min.js')"></script>
+	</body>
+</html>
