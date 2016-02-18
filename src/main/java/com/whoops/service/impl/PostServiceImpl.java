@@ -21,6 +21,7 @@ import com.whoops.po.LikePost;
 import com.whoops.po.LikePostExample;
 import com.whoops.po.Msg;
 import com.whoops.po.Post;
+import com.whoops.po.PostExample;
 import com.whoops.service.IPostService;
 
 @Transactional
@@ -83,7 +84,17 @@ public class PostServiceImpl implements IPostService {
 
 	@Override
 	public List<Post> listNewBySchool(Post post) {
-		List<Post> list = postDao.listNewBySchool(post);
+		List<Post> list = null;
+		if (post.getStartPage() <= 1) {
+			PostExample example = new PostExample();
+			example.createCriteria().andActivityIdEqualTo(1).andSchoolIdEqualTo(post.getSchoolId());
+			list = postDao.selectByExample(example );
+			List<Post> list2= postDao.listNewBySchool(post);
+			list.addAll(list2);
+		}else {
+			list = postDao.listNewBySchool(post);
+		}
+		
 		addLikeAndUnlikePostFlag(list, post.getUid());
 		addFavorPostFlag(list, post.getUid());
 		return list;
@@ -333,6 +344,9 @@ public class PostServiceImpl implements IPostService {
 	}
 	
 	private void addFavorPostFlag(List<Post> list, Integer uid){
+		if (uid == null) {
+			return;
+		}
 		FavorPostExample example = new FavorPostExample();
 		example.createCriteria().andUidEqualTo(uid);
 		List<FavorPost> favorPosts = favorPostDao.selectByExample(example );
@@ -348,6 +362,9 @@ public class PostServiceImpl implements IPostService {
 	}
 	
 	private void addLikeAndUnlikePostFlag(List<Post> list, Integer uid){
+		if (uid == null) {
+			return;
+		}
 		LikePostExample example = new LikePostExample();
 		example.createCriteria().andUidEqualTo(uid);
 		List<LikePost> likePosts = likePostDao.selectByExample(example );
@@ -368,7 +385,35 @@ public class PostServiceImpl implements IPostService {
 
 	@Override
 	public List<Post> listByActivity(Post post) {
-		return postDao.listByActivity(post);
+		List<Post> list = postDao.listNewActivityPost(post);
+		List<Post> list2 = postDao.listByActivity(post);
+		list.addAll(list2);
+		addLikeAndUnlikePostFlag(list, post.getUid());
+		addFavorPostFlag(list, post.getUid());
+		return list;
+	}
+
+	@Override
+	public List<Post> listByContent(String content) {
+		PostExample example = new PostExample();
+		example.createCriteria().andContentLike(content);
+		return postDao.selectByExample(example );
+	}
+
+	@Override
+	public void deletePost(Post post) {
+		postDao.deleteByPrimaryKey(post.getId());
+		
+	}
+
+	@Override
+	public void updatePost(Post post) {
+		postDao.updateByPrimaryKeySelective(post);
+	}
+
+	@Override
+	public List<Post> listNewActivityPost(Post post) {
+		return postDao.listNewActivityPost(post);
 	}
 	
 }

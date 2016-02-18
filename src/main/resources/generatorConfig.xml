@@ -13,7 +13,7 @@
             targetProject="/Users/liunaikun/Documents/workspace/whoops/src/main/resources/com/whoops/resources" />
         <javaClientGenerator targetPackage="com.whoops.dao"
             targetProject="/Users/liunaikun/Documents/workspace/whoops/src/main/resources/com/whoops/java" type="XMLMAPPER" />
-        <table schema="CL_DEMO" tableName="manager_user" />
+        <table schema="CL_DEMO" tableName="post" />
         
     </context>
 </generatorConfiguration>

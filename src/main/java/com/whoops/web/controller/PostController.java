@@ -98,6 +98,9 @@ public class PostController extends BaseController {
 		if(file != null && file.length > 0){
 			StringBuilder sb =  new StringBuilder();
 			for (int i = 0; i < file.length; i++) {
+				if(file[i].getSize() <1){
+					continue;
+				}
 				String uuid = UUID.randomUUID().toString();
 				String fileName = uuid + ".jpg";
 				FileUtils.copyInputStreamToFile(file[i].getInputStream(), new File(path, fileName));
@@ -105,7 +108,9 @@ public class PostController extends BaseController {
 				imagePath = imagePath.substring(5);
 				sb.append(imagePath).append(",");
 			}
-			po.setImage(sb.substring(0, sb.length() -1));
+			if (sb.length() > 0) {
+				po.setImage(sb.substring(0, sb.length() -1));
+			}
 		}
 		
 		if(po.getSchoolId() != null){
@@ -332,5 +337,5 @@ public class PostController extends BaseController {
 	}
 	
 	
-
 }
+

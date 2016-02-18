@@ -37,4 +37,12 @@ public interface IPostService {
 	void reportPost(AuditPost auditPost);
 	
 	List<Post> listByActivity(Post post);
+	
+	List<Post> listByContent(String content);
+
+	void deletePost(Post post);
+	
+	void updatePost(Post post);
+	
+	List<Post> listNewActivityPost(Post post);
 }

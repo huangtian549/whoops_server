@@ -1,22 +1,27 @@
+<%@ page language="java" import="java.util.*" contentType="text/html; charset=utf-8" %>  
 <html>
 <body>
-<h2>POST!</h2>
+<h2>SUBMIT NEW        POST!</h2>
 
 <body><form action="/whoops/post/addForWeb" method="post" enctype="multipart/form-data">
-
+状态内容<br/>
 <textarea rows="10" cols="200" name="content">
 
 </textarea><br/>
 
+上传图片，如果要上传多张图片，点击 Add picture button增加选择图片的功能<br/>
+注意：不能上传超过6张图片<br/>
 <input type="file" name="file" accept="image/*" />
 <input name="aa" type="button" value="Add picture button" onclick="addPic()"/>
 <div id="selectPic"></div>
 <br/>
-<input name="activityId" type="hidden" value="1" />
+<input name="activityId" type="hidden" value="0" />
 <br/>
-<input name="latitude" type="hidden" value="0" />
+<input name="latitude" type="hidden" value="38.890" />
 <br/>
-<input name="longitude" type="hidden" value="0" />
+<input name="longitude" type="hidden" value="-77.324" />
+<br/>
+<input name="schoolId" type="hidden" value="10001" />
 <br/>
 <input name="uid" type="hidden" value="999999999" />
 <br/>

@@ -15,6 +15,7 @@ import com.whoops.po.LikeComment;
 import com.whoops.po.LikeCommentExample;
 import com.whoops.po.Msg;
 import com.whoops.po.Post;
+import com.whoops.po.PostExample;
 import com.whoops.service.ICommentService;
 
 @Service
@@ -182,5 +183,35 @@ public class CommentServiceImpl implements ICommentService {
 		record.setType(2);
 		record.setPostId(postId);
 		msgDao.insert(record);
+	}
+
+	@Override
+	public List<Comment> selectCommentByContent(String content) {
+		CommentExample example = new CommentExample();
+		example.createCriteria().andContentLike(content);
+		List<Comment> list = commentDao.selectByExample(example );
+		return list;
+	}
+
+	@Override
+	public void deleteComment(Comment comment) {
+		Comment comment2  = commentDao.selectByPrimaryKey(comment.getId());
+		
+		if (comment2 != null) {
+			commentDao.deleteByPrimaryKey(comment.getId());
+			Post post = postDao.selectByPrimaryKey(comment2.getPostId());
+			if (post != null) {
+				if (post.getCommentCount() > 0) {
+					Post record = new Post();
+					record.setId(post.getId());
+					record.setCommentCount(post.getCommentCount() - 1);
+					postDao.updateByPrimaryKeySelective(record);
+				}
+				
+			}
+			
+		}
+		
+		
 	}
 }

@@ -19,6 +19,12 @@
 		<property name="configLocation">
 			<value>/WEB-INF/classes/velocity/velocity.properties</value>
 		</property>
+		<property name="velocityProperties">
+            <props>
+                <prop key="input.encoding">utf-8</prop>
+                <prop key="output.encoding">utf-8</prop>
+            </props>
+        </property> 
 	</bean>
 
 	<bean id="viewResolver"

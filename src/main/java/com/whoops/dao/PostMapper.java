@@ -114,4 +114,6 @@ public interface PostMapper {
 	List<Post> listNewByLocation(Post post);
 	
 	List<Post> listByActivity(Post post);
+	
+	List<Post> listNewActivityPost(Post post);
 }

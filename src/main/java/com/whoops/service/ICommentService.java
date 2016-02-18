@@ -15,5 +15,9 @@ public interface ICommentService {
 	int updateLikeById(Comment comment);
 
 	int updateUnlikeById(Comment comment);
+	
+	List<Comment> selectCommentByContent(String content);
+	
+	void deleteComment(Comment comment);
 
 }
