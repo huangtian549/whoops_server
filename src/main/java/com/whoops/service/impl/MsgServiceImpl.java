@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import com.googlecode.ehcache.annotations.Cacheable;
 import com.whoops.dao.MsgMapper;
 import com.whoops.po.Msg;
 import com.whoops.service.IMsgService;
@@ -17,6 +18,7 @@ public class MsgServiceImpl implements IMsgService {
 	private MsgMapper msgDao;
 	
 	@Override
+	@Cacheable(cacheName = "msgCache" )
 	public List<Msg> getMsgByUid(Msg msg) {
 		
 		List<Msg> list =  msgDao.selectByUid(msg);

@@ -385,8 +385,14 @@ public class PostServiceImpl implements IPostService {
 
 	@Override
 	public List<Post> listByActivity(Post post) {
-		List<Post> list = postDao.listNewActivityPost(post);
+		List<Post> list = new ArrayList<Post>();
+		if(post.getStartPage() <= 1) {
+			Post post2 = postDao.selectByPrimaryKey(1836);
+			list.add(post2);
+		}
+		List<Post> list1 = postDao.listNewActivityPost(post);
 		List<Post> list2 = postDao.listByActivity(post);
+		list.addAll(list1);
 		list.addAll(list2);
 		addLikeAndUnlikePostFlag(list, post.getUid());
 		addFavorPostFlag(list, post.getUid());

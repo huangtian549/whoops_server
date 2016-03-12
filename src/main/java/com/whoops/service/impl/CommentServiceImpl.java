@@ -62,6 +62,28 @@ public class CommentServiceImpl implements ICommentService {
 		record.setStatus(0);
 		record.setType(1);
 		msgDao.insert(record );
+		
+		CommentExample example = new CommentExample();
+		example.createCriteria().andPostIdEqualTo(comment.getPostId());
+		List<Comment> comments = commentDao.selectByExample(example );
+		if (comments != null) {
+			for (Comment comment2 : comments) {
+				if (comment2.getUid().intValue() == comment.getUid().intValue()) {
+					continue;
+				}
+				record.setMsg("Someone replies the post you commented" + "\"" + content + "\"");
+				record.setPostId(comment.getPostId());
+				record.setUid(comment2.getUid());
+				record.setStatus(0);
+				record.setType(6);
+				if (comment.getCommentId() != null && comment2.getId().intValue() == comment.getCommentId().intValue()) {
+					record.setCommentId(comment.getId());
+				}
+				
+				msgDao.insert(record);
+			}
+			
+		}
 	}
 
 	@Override

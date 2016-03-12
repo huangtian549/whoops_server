@@ -461,7 +461,7 @@
    
    <select id="listNewActivityPost" resultMap="BaseResultMap" parameterType="com.whoops.po.Post">
    	select * from post a where a.create_date > DATE_ADD(NOW(),INTERVAL -1 DAY) 
-   	and a.activity_id = #{activityId} and status =0 order by create_date desc
+   	and a.activity_id = #{activityId} and status =0 order by create_date desc, like_num - dislike_num desc
    </select>
    
    <select id="listFavorPostByUid" resultMap="BaseResultMap" parameterType="com.whoops.po.FavorPost" >

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!--   
+/**  
+ *   
+ * 缓存配置  
+ * @author zyz   
+ * @date 2013年7月2日  
+ *   
+ */ -->  
+<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ehcache.org/ehcache.xsd">    
+        
+    <diskStore path="/Users/liunaikun/web_ehcache/" />     
+        
+    <defaultCache    
+            maxElementsInMemory="300"    
+            eternal="false"    
+            timeToIdleSeconds="3600"    
+            timeToLiveSeconds="3600"    
+            overflowToDisk="true"    
+            diskPersistent="false"    
+            diskExpiryThreadIntervalSeconds="100"    
+            memoryStoreEvictionPolicy="LRU"    
+            />    
+    <cache name="msgCache"    
+            maxElementsInMemory="300"    
+            eternal="false"    
+            timeToIdleSeconds="3600"    
+            timeToLiveSeconds="3600"    
+            overflowToDisk="true"    
+            diskPersistent="false"    
+            diskExpiryThreadIntervalSeconds="100"    
+            memoryStoreEvictionPolicy="LRU"      
+            />    
+</ehcache>  
